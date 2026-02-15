@@ -168,14 +168,32 @@ import { ReactiveFormsModule, FormBuilder } from '@angular/forms';
                     </div>
                  </div>
               </div>
+
+              <!-- Admin Notes -->
+              @if (tx.notes) {
+                <div class="mb-8">
+                   <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Notes</h4>
+                   <div class="bg-yellow-50 text-yellow-800 p-3 rounded-lg text-sm border border-yellow-100">
+                     {{ tx.notes }}
+                   </div>
+                </div>
+              }
               
+              <!-- Logs -->
               <div>
                 <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Activity Logs</h4>
-                <div class="bg-slate-900 rounded-lg p-4 font-mono text-xs text-slate-300 space-y-1.5 max-h-40 overflow-y-auto">
+                <div class="bg-slate-900 rounded-lg p-4 font-mono text-xs text-slate-300 space-y-3 max-h-60 overflow-y-auto">
                   @for (log of tx.logs; track $index) {
-                    <div class="flex gap-3">
-                      <span class="text-slate-500 select-none">{{ $index + 1 }}.</span>
-                      <span>{{ log }}</span>
+                    <div class="flex gap-4 items-start group">
+                      <div class="flex-shrink-0 w-28 text-slate-500 text-[10px] pt-0.5 border-r border-slate-700 pr-3 text-right">
+                        {{ log.timestamp | date:'MMM d, HH:mm:ss' }}
+                      </div>
+                      <div class="flex-1">
+                        <p class="text-slate-300 group-hover:text-white transition-colors">{{ log.message }}</p>
+                        @if (log.actor) {
+                           <p class="text-[10px] text-slate-600 mt-0.5 group-hover:text-slate-500">Source: <span class="text-slate-500 font-medium">{{ log.actor }}</span></p>
+                        }
+                      </div>
                     </div>
                   }
                   @if (!tx.logs || tx.logs.length === 0) {

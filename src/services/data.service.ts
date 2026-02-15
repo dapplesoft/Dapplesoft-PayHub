@@ -103,6 +103,10 @@ export class DataService {
     }
 
     if (this.transactions().length === 0) {
+      const now = new Date();
+      const fiveMinsAgo = new Date(now.getTime() - 5 * 60000);
+      const twoDaysAgo = new Date(now.getTime() - 48 * 60 * 60000);
+
       this.transactions.set([
         {
           id: 't-1',
@@ -110,15 +114,16 @@ export class DataService {
           amount: 500,
           transaction_id: 'TXN-1001',
           status: 'Success',
-          date: new Date().toISOString(),
+          date: twoDaysAgo.toISOString(),
           customer_email: 'customer.one@example.com',
           payment_method: 'VISA •••• 4242',
+          notes: 'Standard checkout flow, IPN verified instantly.',
           logs: [
-            '2023-10-25 10:00:00 - Transaction initialized',
-            '2023-10-25 10:00:05 - User redirected to gateway',
-            '2023-10-25 10:02:30 - Payment authorized by gateway',
-            '2023-10-25 10:02:31 - IPN received: VALID',
-            '2023-10-25 10:02:31 - Status updated to Success'
+            { timestamp: new Date(twoDaysAgo.getTime()).toISOString(), message: 'Transaction initialized', actor: 'System' },
+            { timestamp: new Date(twoDaysAgo.getTime() + 5000).toISOString(), message: 'User redirected to gateway', actor: 'Gateway' },
+            { timestamp: new Date(twoDaysAgo.getTime() + 150000).toISOString(), message: 'Payment authorized by gateway', actor: 'Gateway' },
+            { timestamp: new Date(twoDaysAgo.getTime() + 151000).toISOString(), message: 'IPN received: VALID', actor: 'System' },
+            { timestamp: new Date(twoDaysAgo.getTime() + 151000).toISOString(), message: 'Status updated to Success', actor: 'System' }
           ]
         },
         {
@@ -127,13 +132,14 @@ export class DataService {
           amount: 1200,
           transaction_id: 'TXN-1002',
           status: 'Pending',
-          date: new Date().toISOString(),
+          date: fiveMinsAgo.toISOString(),
           customer_email: 'buyer.two@test.com',
           payment_method: 'BKASH',
+          notes: 'Customer reported a delay in OTP reception. Monitoring.',
           logs: [
-            '2023-10-26 14:15:00 - Transaction initialized',
-            '2023-10-26 14:15:10 - User redirected to gateway',
-            '2023-10-26 14:15:15 - Waiting for user input'
+            { timestamp: new Date(fiveMinsAgo.getTime()).toISOString(), message: 'Transaction initialized', actor: 'System' },
+            { timestamp: new Date(fiveMinsAgo.getTime() + 10000).toISOString(), message: 'User redirected to gateway', actor: 'Gateway' },
+            { timestamp: new Date(fiveMinsAgo.getTime() + 15000).toISOString(), message: 'Waiting for user input', actor: 'System' }
           ]
         }
       ]);
@@ -196,7 +202,11 @@ export class DataService {
       ...t,
       id: crypto.randomUUID(),
       date: new Date().toISOString(),
-      logs: [`${new Date().toISOString()} - Transaction created manually`]
+      logs: [{
+        timestamp: new Date().toISOString(),
+        message: 'Transaction created manually',
+        actor: 'Admin'
+      }]
     };
     this.transactions.update(ts => [newTx, ...ts]);
   }

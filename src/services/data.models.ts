@@ -33,6 +33,12 @@ export interface Project {
   secret_key: string;
 }
 
+export interface LogEntry {
+  timestamp: string;
+  message: string;
+  actor?: string; // e.g. "System", "Gateway", "User"
+}
+
 export interface Transaction {
   id: string;
   project_id: string;
@@ -42,7 +48,8 @@ export interface Transaction {
   date: string;
   customer_email?: string;
   payment_method?: string;
-  logs?: string[];
+  logs?: LogEntry[];
+  notes?: string;
 }
 
 export interface Payout {
