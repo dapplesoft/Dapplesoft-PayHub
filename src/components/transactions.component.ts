@@ -23,7 +23,7 @@ import { ReactiveFormsModule, FormBuilder } from '@angular/forms';
 
       <!-- Filters -->
       <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200" [formGroup]="filterForm">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
           
           <div>
             <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Client Project</label>
@@ -48,6 +48,10 @@ import { ReactiveFormsModule, FormBuilder } from '@angular/forms';
           <div>
             <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Start Date</label>
             <input type="date" formControlName="startDate" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-slate-50/50">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">End Date</label>
+            <input type="date" formControlName="endDate" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-slate-50/50">
           </div>
           <div>
             <button (click)="resetFilters()" class="w-full px-4 py-2 bg-slate-100 text-slate-600 rounded-lg text-sm font-medium hover:bg-slate-200 transition-colors">
@@ -104,109 +108,150 @@ import { ReactiveFormsModule, FormBuilder } from '@angular/forms';
 
     <!-- Details Modal -->
     @if (selectedTx(); as tx) {
-      <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm" (click)="closeModal()">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden animate-fade-in-up transform transition-all" (click)="$event.stopPropagation()">
+      <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-md" (click)="closeModal()">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden animate-fade-in-up transform transition-all" (click)="$event.stopPropagation()">
            <!-- Header -->
-           <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-             <div class="flex items-center space-x-3">
-               <div class="bg-blue-100 p-2 rounded-lg text-blue-600">
-                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+           <div class="px-8 py-6 border-b border-slate-100 flex justify-between items-center bg-white">
+             <div class="flex items-center space-x-4">
+               <div [class]="'p-3 rounded-2xl ' + getStatusClass(tx.status).replace('text-', 'bg-').replace('800', '100') + ' ' + getStatusClass(tx.status).split(' ')[1]">
+                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                </div>
                <div>
-                 <h3 class="font-bold text-lg text-slate-800">Transaction Details</h3>
-                 <p class="text-xs text-slate-500 font-mono">{{ tx.transaction_id }}</p>
+                 <div class="flex items-center gap-2">
+                   <h3 class="font-bold text-xl text-slate-900">Transaction Details</h3>
+                   <span [class]="'px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ' + getStatusClass(tx.status)">
+                     {{ tx.status }}
+                   </span>
+                 </div>
+                 <div class="flex items-center mt-1 group">
+                   <p class="text-xs text-slate-400 font-mono tracking-tight">{{ tx.transaction_id }}</p>
+                   <button (click)="copyId(tx.transaction_id)" class="ml-2 text-slate-300 hover:text-blue-500 transition-colors">
+                     @if (copiedId()) {
+                       <span class="text-[10px] font-bold text-emerald-500">Copied!</span>
+                     } @else {
+                       <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                     }
+                   </button>
+                 </div>
                </div>
              </div>
-             <button (click)="closeModal()" class="text-slate-400 hover:text-slate-600 hover:bg-slate-200 rounded-full p-1 transition-colors">
+             <button (click)="closeModal()" class="text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full p-2 transition-colors">
                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
              </button>
            </div>
            
            <!-- Body -->
-           <div class="p-6">
-              <!-- Key Stats -->
-              <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                <div class="p-3 bg-slate-50 rounded-lg border border-slate-100">
-                  <span class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Amount</span>
-                  <span class="block text-lg font-bold text-slate-900">{{ currency() }}{{ tx.amount | number:'1.2-2' }}</span>
-                </div>
-                <div class="p-3 bg-slate-50 rounded-lg border border-slate-100">
-                  <span class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Status</span>
-                  <span [class]="'inline-block px-2 py-0.5 rounded text-xs font-bold ' + getStatusClass(tx.status)">{{ tx.status }}</span>
-                </div>
-                 <div class="p-3 bg-slate-50 rounded-lg border border-slate-100 col-span-2">
-                  <span class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Date</span>
-                  <span class="block text-sm font-medium text-slate-700">{{ tx.date | date:'medium' }}</span>
-                </div>
-              </div>
-
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                 <div>
-                    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Customer Information</h4>
-                    <div class="space-y-3">
-                       <div class="flex justify-between border-b border-slate-100 pb-2">
-                         <span class="text-sm text-slate-500">Email</span>
-                         <span class="text-sm font-medium text-slate-800">{{ tx.customer_email || 'N/A' }}</span>
-                       </div>
-                       <div class="flex justify-between border-b border-slate-100 pb-2">
-                         <span class="text-sm text-slate-500">Project</span>
-                         <span class="text-sm font-medium text-slate-800">{{ getProjectName(tx.project_id) }}</span>
-                       </div>
-                    </div>
-                 </div>
-                 <div>
-                    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Payment Information</h4>
-                    <div class="space-y-3">
-                       <div class="flex justify-between border-b border-slate-100 pb-2">
-                         <span class="text-sm text-slate-500">Method</span>
-                         <span class="text-sm font-medium text-slate-800">{{ tx.payment_method || 'N/A' }}</span>
-                       </div>
-                       <div class="flex justify-between border-b border-slate-100 pb-2">
-                         <span class="text-sm text-slate-500">Gateway ID</span>
-                         <span class="text-sm font-medium text-slate-800 font-mono text-xs">{{ tx.id.substring(0,8) }}...</span>
-                       </div>
-                    </div>
-                 </div>
-              </div>
-
-              <!-- Admin Notes -->
-              @if (tx.notes) {
-                <div class="mb-8">
-                   <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Notes</h4>
-                   <div class="bg-yellow-50 text-yellow-800 p-3 rounded-lg text-sm border border-yellow-100">
-                     {{ tx.notes }}
-                   </div>
-                </div>
-              }
-              
-              <!-- Logs -->
-              <div>
-                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Activity Logs</h4>
-                <div class="bg-slate-900 rounded-lg p-4 font-mono text-xs text-slate-300 space-y-3 max-h-60 overflow-y-auto">
-                  @for (log of tx.logs; track $index) {
-                    <div class="flex gap-4 items-start group">
-                      <div class="flex-shrink-0 w-28 text-slate-500 text-[10px] pt-0.5 border-r border-slate-700 pr-3 text-right">
-                        {{ log.timestamp | date:'MMM d, HH:mm:ss' }}
-                      </div>
-                      <div class="flex-1">
-                        <p class="text-slate-300 group-hover:text-white transition-colors">{{ log.message }}</p>
-                        @if (log.actor) {
-                           <p class="text-[10px] text-slate-600 mt-0.5 group-hover:text-slate-500">Source: <span class="text-slate-500 font-medium">{{ log.actor }}</span></p>
-                        }
+           <div class="p-8 max-h-[70vh] overflow-y-auto custom-scrollbar">
+              <!-- Grid Layout -->
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                
+                <!-- Left Column: Info -->
+                <div class="md:col-span-2 space-y-8">
+                  
+                  <!-- Amount Display -->
+                  <div class="bg-slate-50 rounded-2xl p-6 border border-slate-100 flex items-center justify-between">
+                    <div>
+                      <span class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.1em]">Total Amount</span>
+                      <div class="flex items-baseline gap-1 mt-1">
+                        <span class="text-2xl font-bold text-slate-900">{{ currency() }}</span>
+                        <span class="text-4xl font-black text-slate-900 tracking-tight">{{ tx.amount | number:'1.2-2' }}</span>
                       </div>
                     </div>
-                  }
-                  @if (!tx.logs || tx.logs.length === 0) {
-                    <span class="text-slate-500 italic">No logs available for this transaction.</span>
+                    <div class="text-right">
+                      <span class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.1em]">Date & Time</span>
+                      <p class="text-sm font-semibold text-slate-700 mt-1">{{ tx.date | date:'MMM d, y' }}</p>
+                      <p class="text-xs text-slate-400">{{ tx.date | date:'h:mm a' }}</p>
+                    </div>
+                  </div>
+
+                  <!-- Details Sections -->
+                  <div class="grid grid-cols-2 gap-8">
+                    <div>
+                      <h4 class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.1em] mb-4">Customer</h4>
+                      <div class="space-y-4">
+                        <div class="flex flex-col">
+                          <span class="text-xs text-slate-400 mb-0.5">Email Address</span>
+                          <span class="text-sm font-semibold text-slate-800 truncate">{{ tx.customer_email || 'Not provided' }}</span>
+                        </div>
+                        <div class="flex flex-col">
+                          <span class="text-xs text-slate-400 mb-0.5">Project</span>
+                          <span class="text-sm font-semibold text-slate-800">{{ getProjectName(tx.project_id) }}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <h4 class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.1em] mb-4">Payment</h4>
+                      <div class="space-y-4">
+                        <div class="flex flex-col">
+                          <span class="text-xs text-slate-400 mb-0.5">Method</span>
+                          <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                            <span class="text-sm font-semibold text-slate-800">{{ tx.payment_method || 'Unknown' }}</span>
+                          </div>
+                        </div>
+                        <div class="flex flex-col">
+                          <span class="text-xs text-slate-400 mb-0.5">Internal ID</span>
+                          <span class="text-xs font-mono text-slate-500">{{ tx.id }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Notes -->
+                  @if (tx.notes) {
+                    <div class="bg-amber-50/50 rounded-2xl p-5 border border-amber-100/50">
+                       <h4 class="text-[10px] font-bold text-amber-600 uppercase tracking-[0.1em] mb-2 flex items-center gap-2">
+                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path></svg>
+                         Internal Notes
+                       </h4>
+                       <p class="text-sm text-amber-900 leading-relaxed font-medium">
+                         {{ tx.notes }}
+                       </p>
+                    </div>
                   }
                 </div>
+
+                <!-- Right Column: Timeline -->
+                <div class="border-l border-slate-100 pl-8">
+                  <h4 class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.1em] mb-6">Activity Timeline</h4>
+                  <div class="space-y-8 relative">
+                    <!-- Vertical Line -->
+                    <div class="absolute left-[11px] top-2 bottom-2 w-0.5 bg-slate-100"></div>
+                    
+                    @for (log of tx.logs; track $index) {
+                      <div class="relative pl-8 group">
+                        <!-- Dot -->
+                        <div class="absolute left-0 top-1.5 w-6 h-6 rounded-full border-4 border-white bg-slate-200 shadow-sm group-hover:scale-110 transition-transform z-10"
+                             [class.bg-blue-500]="log.actor === 'Gateway'"
+                             [class.bg-emerald-500]="log.message.includes('Success') || log.message.includes('VALID')"
+                             [class.bg-amber-500]="log.actor === 'System' && !log.message.includes('VALID')">
+                        </div>
+                        
+                        <div>
+                          <p class="text-xs font-bold text-slate-800 leading-tight">{{ log.message }}</p>
+                          <div class="flex items-center gap-2 mt-1">
+                            <span class="text-[10px] text-slate-400 font-medium">{{ log.timestamp | date:'h:mm:ss a' }}</span>
+                            <span class="text-[10px] text-slate-300">•</span>
+                            <span class="text-[10px] text-slate-500 font-bold uppercase tracking-wider">{{ log.actor }}</span>
+                          </div>
+                        </div>
+                      </div>
+                    }
+                    @if (!tx.logs || tx.logs.length === 0) {
+                      <div class="text-center py-8">
+                        <p class="text-xs text-slate-400 italic">No activity logs recorded.</p>
+                      </div>
+                    }
+                  </div>
+                </div>
+
               </div>
            </div>
            
            <!-- Footer -->
-           <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
-              <button (click)="closeModal()" class="px-4 py-2 bg-[#1E40AF] text-white rounded-lg text-sm font-medium hover:bg-blue-800 transition-colors shadow-sm">
-                Close
+           <div class="px-8 py-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
+              <button (click)="closeModal()" class="px-6 py-2.5 bg-slate-900 text-white rounded-xl text-sm font-bold hover:bg-slate-800 transition-all shadow-lg shadow-slate-200 active:scale-95">
+                Dismiss
               </button>
            </div>
         </div>
@@ -223,6 +268,14 @@ export class TransactionsComponent {
   
   // State for selected transaction modal
   selectedTx = signal<Transaction | null>(null);
+  copiedId = signal(false);
+
+  copyId(id: string) {
+    navigator.clipboard.writeText(id).then(() => {
+      this.copiedId.set(true);
+      setTimeout(() => this.copiedId.set(false), 2000);
+    });
+  }
 
   filterForm = this.fb.group({
     project: ['All'],
