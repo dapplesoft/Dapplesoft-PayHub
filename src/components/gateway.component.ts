@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { DataService } from '../services/data.service';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Gateway } from '../services/data.models';
+import { Gateway, Currency, Mode } from '../services/data.models';
 
 @Component({
   selector: 'app-gateway',

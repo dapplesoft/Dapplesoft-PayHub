@@ -2,7 +2,6 @@
   "compilerOptions": {
     "target": "ES2022",
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
     "useDefineForClassFields": false,
     "module": "ESNext",
     "lib": [
@@ -25,8 +24,9 @@
       ]
     }
   },
-  "files": [
-    "./index.tsx"
+  "include": [
+    "src/**/*",
+    "index.tsx"
   ],
   "angularCompilerOptions": {
     "disableTypeScriptVersionCheck": true
