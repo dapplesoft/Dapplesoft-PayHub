@@ -1,4 +1,4 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { User } from './data.models';
 
@@ -16,8 +16,9 @@ export class AuthService {
   };
 
   currentUser = signal<User | null>(null);
+  private router = inject(Router);
 
-  constructor(private router: Router) {
+  constructor() {
     // Try to load from local storage
     const stored = localStorage.getItem('payhub_user');
     if (stored) {

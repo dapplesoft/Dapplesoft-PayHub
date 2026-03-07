@@ -165,8 +165,8 @@ export class GatewayComponent {
     payment_url: ['', Validators.required],
     verify_url: ['', Validators.required],
     ipn_url: ['', Validators.required],
-    currency: ['BDT' as const, Validators.required],
-    mode: ['Sandbox' as const, Validators.required],
+    currency: ['BDT' as Currency, Validators.required],
+    mode: ['Sandbox' as Mode, Validators.required],
     active: [false]
   });
 
